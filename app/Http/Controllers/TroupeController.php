@@ -41,6 +41,15 @@ class TroupeController extends Controller
         return new TroupeResource($troupe->load(['creator', 'interestTags', 'members', 'messages']));
     }
 
+    public function public()
+    {
+        $troupes = Troupe::where('visibility', 'public')
+            ->with(['creator', 'interestTags', 'members', 'messages'])
+            ->get();
+
+        return TroupeResource::collection($troupes);
+    }
+
     public function show($id)
     {
         $troupe = Troupe::with(['creator', 'interestTags', 'members', 'messages'])->findOrFail($id);
