@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Enums\UserRole;
+use Illuminate\Support\Str;
 
 class User extends Authenticatable
 {
@@ -25,6 +26,16 @@ class User extends Authenticatable
         'role',
         'email_verified_at',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($model) {
+            $model->id = $model->id ?? Str::uuid();
+        });
+    }
+
 
     /**
      * The attributes that should be hidden for serialization.
