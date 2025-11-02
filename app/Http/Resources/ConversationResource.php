@@ -3,6 +3,8 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\UserResource;
+use App\Http\Resources\MessageResource;
 
 class ConversationResource extends JsonResource
 {
@@ -19,17 +21,13 @@ class ConversationResource extends JsonResource
                     'id' => $p->id,
                     'user_id' => $p->user_id,
                     'joined_at' => $p->created_at,
+                    'user' => new UserResource($p->user),
                 ])
             ),
             'messages' => $this->whenLoaded(
                 'messages',
                 fn() =>
-                $this->messages->map(fn($m) => [
-                    'id' => $m->id,
-                    'sender_id' => $m->sender_id,
-                    'content' => $m->content,
-                    'sent_at' => $m->created_at,
-                ])
+                MessageResource::collection($this->messages)
             ),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,

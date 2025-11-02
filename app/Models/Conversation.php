@@ -11,6 +11,9 @@ class Conversation extends Model
         'created_by',
     ];
 
+    protected $keyType = 'string';
+    public $incrementing = false;
+
     protected static function boot()
     {
         parent::boot();

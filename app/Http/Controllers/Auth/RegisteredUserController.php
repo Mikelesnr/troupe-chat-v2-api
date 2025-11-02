@@ -15,6 +15,7 @@ use Inertia\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use App\Http\Resources\UserResource;
 
 class RegisteredUserController extends Controller
 {
@@ -48,6 +49,7 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
+            'avatar_url' => '/images/Profile.svg',
             'email_verified_at' => now(), // Skip verification for now
         ]);
 
@@ -59,12 +61,7 @@ class RegisteredUserController extends Controller
         if ($isFrontend) {
             return response()->json([
                 'message' => 'User registered and logged in successfully',
-                'user' => [
-                    'name' => $user->name,
-                    'email' => $user->email,
-                    'role' => $user->role,
-                    'email_verified_at' => $user->email_verified_at,
-                ],
+                'user' => new UserResource($user),
             ], 201);
         }
 

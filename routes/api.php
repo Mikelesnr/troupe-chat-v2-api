@@ -13,3 +13,4 @@ Route::prefix('messages')->group(base_path('routes/api/messages.php'));
 Route::prefix('conversations')->group(base_path('routes/api/conversations.php'));
 Route::prefix('participants')->group(base_path('routes/api/participants.php'));
 Route::prefix('troupe-tags')->group(base_path('routes/api/troupe_tags.php'));
+Route::prefix('users')->group(base_path('routes/api/users.php'));
