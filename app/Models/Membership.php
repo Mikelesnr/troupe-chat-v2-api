@@ -17,7 +17,7 @@ class Membership extends Model
         parent::boot();
 
         static::creating(function ($model) {
-            $model->id = $model->id ?? Str::uuid();
+            $model->id = $model->id ?? (string) Str::uuid();
         });
     }
 
@@ -25,11 +25,11 @@ class Membership extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     public function troupe()
     {
-        return $this->belongsTo(Troupe::class);
+        return $this->belongsTo(Troupe::class, 'troupe_id');
     }
 }

@@ -12,6 +12,7 @@ use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
+use App\Http\Resources\UserResource;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -42,12 +43,7 @@ class AuthenticatedSessionController extends Controller
         if ($isFrontend) {
             return response()->json([
                 'message' => 'Login successful',
-                'user' => [
-                    'name' => $user->name,
-                    'email' => $user->email,
-                    'role' => $user->role,
-                    'email_verified_at' => $user->email_verified_at,
-                ],
+                'user' => new UserResource($user),
             ]);
         }
 

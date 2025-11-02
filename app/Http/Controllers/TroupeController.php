@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Troupe;
+use App\Models\Membership;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Resources\TroupeResource;
@@ -21,24 +22,23 @@ class TroupeController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'visibility' => 'required|in:public,private',
-            'avatar_url' => 'nullable|url',
-            'interest_tag_ids' => 'array',
-            'interest_tag_ids.*' => 'uuid|exists:interest_tags,id',
         ]);
 
         $troupe = Troupe::create([
             'name' => $validated['name'],
             'description' => $validated['description'] ?? null,
             'visibility' => $validated['visibility'],
-            'avatar_url' => $validated['avatar_url'] ?? null,
+            'avatar_url' => '/images/Troupes-icon.svg',
             'created_by' => Auth::id(),
         ]);
 
-        if (!empty($validated['interest_tag_ids'])) {
-            $troupe->interestTags()->sync($validated['interest_tag_ids']);
-        }
+        // ✅ Automatically add creator as a member
+        Membership::create([
+            'user_id' => Auth::id(),
+            'troupe_id' => $troupe->id,
+        ]);
 
-        return new TroupeResource($troupe->load(['creator', 'interestTags', 'members', 'messages']));
+        return new TroupeResource($troupe->load(['creator', 'members', 'messages']));
     }
 
     public function public()
@@ -85,6 +85,20 @@ class TroupeController extends Controller
         }
 
         return new TroupeResource($troupe->load(['creator', 'interestTags', 'members', 'messages']));
+    }
+
+    public function mine()
+    {
+        $userId = Auth::id();
+
+        $troupes = Troupe::whereHas('members', function ($query) use ($userId) {
+            $query->where('user_id', $userId);
+        })
+            ->with(['creator', 'interestTags', 'members', 'messages'])
+            ->latest()
+            ->get();
+
+        return TroupeResource::collection($troupes);
     }
 
     public function destroy($id)

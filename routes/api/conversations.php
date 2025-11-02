@@ -5,6 +5,7 @@ use App\Http\Controllers\ConversationController;
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/', [ConversationController::class, 'index']);
+    Route::get('/mine', [ConversationController::class, 'mine']);
     Route::post('/', [ConversationController::class, 'store']);
     Route::get('/{id}', [ConversationController::class, 'show']);
     Route::put('/{id}', [ConversationController::class, 'update']);
